@@ -237,6 +237,8 @@ public class VistaPrincipal extends javax.swing.JFrame {
                 for (Producto p : productos) {
                     modelo.addRow(new Object[]{p.getNombre(), p.getCategoria(), p.getPrecio()});
                 }
+                txtNombre.setText("");
+                txtPrecio.setText("");
             } catch (NumberFormatException r) {
                 JOptionPane.showMessageDialog(this, "Ingrese un precio correcto", "Error", HEIGHT);
             }
