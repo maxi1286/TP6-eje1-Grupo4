@@ -2,6 +2,9 @@ package Vistas;
 
 import Entidades.Producto;
 import java.util.ArrayList;
+import javax.swing.JDesktopPane;
+import javax.swing.JOptionPane;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 /*
@@ -15,16 +18,30 @@ import javax.swing.table.DefaultTableModel;
  */
 public class VistaPrincipal extends javax.swing.JFrame {
 
-    ArrayList<String> productos = new ArrayList();
+    ArrayList<Producto> productos = new ArrayList();
     DefaultTableModel modelo = new DefaultTableModel();
-    
+
+    public boolean ValidarCamposVacios(JDesktopPane jDesktopPane1) {
+        boolean bandera = true;
+        for (int i = 0; i < jDesktopPane1.getComponents().length; i++) {
+            if (!bandera) {
+                break;
+            }
+            if (jDesktopPane1.getComponents()[i] instanceof JTextField) {
+                bandera = !((JTextField) jDesktopPane1.getComponents()[i]).getText().equals("") ? true : false;
+                jDesktopPane1.getComponents()[i].requestFocus();
+            }
+        }
+        return bandera;
+    }
+
     /**
      * Creates new form Productos
      */
     public VistaPrincipal() {
         initComponents();
         ArmarCabecera();
-        
+
     }
 
     /**
@@ -54,7 +71,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jDesktopPane1.setBackground(new java.awt.Color(153, 153, 153));
         jDesktopPane1.setBorder(javax.swing.BorderFactory.createTitledBorder(""));
 
-        jLCategoria.setText("categoria");
+        jLCategoria.setText("Categoria");
 
         jLNombre.setText("Nombre");
 
@@ -76,6 +93,11 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
         cbProducto.setEditable(true);
         cbProducto.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Perfumeria", "Electronica", "Ropa", "Alimentos" }));
+        cbProducto.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cbProductoItemStateChanged(evt);
+            }
+        });
         cbProducto.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbProductoActionPerformed(evt);
@@ -174,7 +196,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(17, 17, 17)
                                 .addComponent(jDesktopPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(0, 17, Short.MAX_VALUE)))
+                        .addGap(0, 15, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -192,6 +214,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void txtNombreActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNombreActionPerformed
@@ -203,13 +226,34 @@ public class VistaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_cbProductoActionPerformed
 
     private void btnAgregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAgregarActionPerformed
-        String Nom = txtNombre.getText();
-        double pre = Double.parseDouble(txtPrecio.getText());
-
-       
-
+        if (ValidarCamposVacios(jDesktopPane1)) {
+            try {
+                String nom = txtNombre.getText();
+                double pre = Double.parseDouble(txtPrecio.getText());
+                String categoria = (String) cbProducto.getSelectedItem();
+                Producto producto = new Producto(nom, pre, categoria);
+                productos.add(producto);
+                modelo.setRowCount(0);
+                for (Producto p : productos) {
+                    modelo.addRow(new Object[]{p.getNombre(), p.getCategoria(), p.getPrecio()});
+                }
+            } catch (NumberFormatException r) {
+                JOptionPane.showMessageDialog(this, "Ingrese un precio correcto", "Error", HEIGHT);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Complete los Campos", "Error", HEIGHT);
+        }
 
     }//GEN-LAST:event_btnAgregarActionPerformed
+
+    private void cbProductoItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cbProductoItemStateChanged
+        /* String categoria=(String)cbProducto.getSelectedItem();
+         modelo.setRowCount(0);
+        for (Producto p : productos) {
+           
+              modelo.addRow(new Object[]{p.getNombre(),p.getCategoria(),p.getPrecio()});
+        }*/
+    }//GEN-LAST:event_cbProductoItemStateChanged
 
     /**
      * @param args the command line arguments
@@ -262,11 +306,11 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private javax.swing.JTextField txtNombre;
     private javax.swing.JTextField txtPrecio;
     // End of variables declaration//GEN-END:variables
-private void ArmarCabecera(){
-     modelo.addColumn("Nombre");
-     modelo.addColumn("categoria");
-     modelo.addColumn("precio");
-     jTablaproductos.setModel(modelo);
+private void ArmarCabecera() {
+        modelo.addColumn("Nombre");
+        modelo.addColumn("categoria");
+        modelo.addColumn("precio");
+        jTablaproductos.setModel(modelo);
     }
 
 }
