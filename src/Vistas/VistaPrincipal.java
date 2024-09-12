@@ -19,7 +19,11 @@ import javax.swing.table.DefaultTableModel;
 public class VistaPrincipal extends javax.swing.JFrame {
 
     ArrayList<Producto> productos = new ArrayList();
-    DefaultTableModel modelo = new DefaultTableModel();
+    DefaultTableModel modelo = new DefaultTableModel(){
+        public boolean isCellEditable(int fila, int columna) {
+            return false;
+        }
+    };
 
     public boolean ValidarCamposVacios(JDesktopPane jDesktopPane1) {
         boolean bandera = true;
